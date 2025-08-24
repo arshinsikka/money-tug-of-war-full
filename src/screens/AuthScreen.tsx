@@ -17,10 +17,25 @@ export default function AuthScreen({ onAuthed }:{ onAuthed: (userId:string, name
   };
 
   const continueAnon = async () => {
-    const { data, error } = await supabase.auth.signInAnonymously();
-    if (error) return Alert.alert('Auth error', error.message);
-    onAuthed(data.user.id, name || 'You', emoji || '💪');
+    try {
+      // Try Supabase anonymous sign-in if available
+      // @ts-ignore
+      if (supabase.auth.signInAnonymously) {
+        // @ts-ignore
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (!error && data?.user?.id) {
+          onAuthed(data.user.id, name || 'You', emoji || '💪');
+          return;
+        }
+      }
+    } catch (e) {
+      // ignore errors, fallback below
+    }
+    // Fallback: local ephemeral ID (web-safe)
+    const localId = 'local_' + Math.random().toString(36).slice(2, 10);
+    onAuthed(localId, name || 'You', emoji || '💪');
   };
+
 
   const oauth = async (provider:'google'|'apple') => {
     const { error } = await supabase.auth.signInWithOAuth({
