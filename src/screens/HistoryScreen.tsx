@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { fetchCompletionsForTasks, fetchSettlements, fetchTasks, subscribePair, addSettlement } from '@/lib/api';
 import { weekDatesUTC } from '@/utils/date';
 import { Task } from '@/store/types';
-import { VictoryArea, VictoryChart, VictoryTheme } from 'victory-native';
+import { VictoryArea, VictoryChart, VictoryTheme } from 'victory';
 
 export default function HistoryScreen({ pairId, me }:{ pairId:string; me:{id:string} }){
   const [tasks, setTasks] = useState<Task[]>([]);
